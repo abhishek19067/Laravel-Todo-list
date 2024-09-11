@@ -9,13 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
 {
     Schema::create('item_tag', function (Blueprint $table) {
-        $table->id(); // Primary key
-        $table->foreignId('item_id')->constrained()->onDelete('cascade');
-        $table->foreignId('tag_id')->constrained()->onDelete('cascade');
-        $table->timestamps(); // Optional timestamps
+        $table->id();
+
+        $table->unsignedBigInteger('item_id');
+        $table->unsignedBigInteger('tag_id');
+        $table->foreign('item_id')->references('id')->on('store')->onDelete('cascade');
+        $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+
+        
+        $table->timestamps();
     });
 }
 

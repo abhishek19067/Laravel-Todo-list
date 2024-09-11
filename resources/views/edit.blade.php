@@ -70,6 +70,7 @@
         }
     </style>
     
+     
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">To-Do List</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,18 +79,29 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/home">Home </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="confirmLogout(event);">Logout</a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                <a class="nav-link" href="/tags">Tags<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    User Options
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/change-username">Change Username</a>
+                    <a class="dropdown-item" href="/change-password">Change Password</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;" onclick="return confirm('{{ 'Are you sure you want to logout?' }}');">
                     @csrf
                 </form>
+                <a class="nav-link" href="/logout" onclick="return confirm('{{ 'Are you sure you want to logout?' }}');">Logout</a>
             </li>
         </ul>
     </div>
 </nav>
-
 <br>
 
     <div class="container mt-5">

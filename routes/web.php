@@ -44,4 +44,21 @@ Route::put('/update/{id}', [tagsController::class, 'update'])->name('update');
 
 Route::get('/login', [authController::class, 'showLoginForm'])->name('login');
 
-Route::post('/store-tags', [tagsController::class,'storeTags'])->name('store-tags');
+
+
+Route::post('/store-tags', [TagsController::class, 'storeTags'])->name('store.tags');
+
+Route::delete('/tags/{id}', [TagsController::class, 'delete'])->name('tags.delete');
+
+
+Route::get('/change-username', [authController::class, 'showChangeUsernameForm'])->name('change.username');
+Route::post('/change-username', [authController::class, 'changeUsername']);
+
+Route::get('/change-password', [authController::class, 'showChangePasswordForm'])->name('change.password');
+Route::post('/change-password', [authController::class, 'changePassword']);
+
+
+
+
+
+

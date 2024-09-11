@@ -9,10 +9,16 @@ class Tags extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name']; // Assuming tags have a name field
-
+    protected $fillable = ['name']; 
+    protected $table = "tags";
+    protected $primaryKey = "id"; 
+    
     public function items()
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Item::class, 'item_tag', 'tag_id', 'item_id');
+    }
+    public function stores()
+    {
+        return $this->belongsToMany(Store::class);
     }
 }

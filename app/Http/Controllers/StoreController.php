@@ -10,10 +10,17 @@ class StoreController extends Controller
 {
     public function index()
     {
-        $data = Store::all(); 
-        $datas = Tags::all();
-        return view('home', compact('data','datas'));
+        $userId = auth()->id(); 
+        $tags = Tags::where('user_id', $userId)->get();
+        $data = Store::with(['items.tags'])
+                     ->where('user_id', $userId) 
+                     ->get(); 
+    
+        return view('home', compact('data', 'tags'));
     }
+    
+
+
 
     public function store(Request $request)
     {

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -210,24 +211,9 @@
 .close-primary:hover {
     color: #0056b3; 
 }
-.badge {
-    align-items: center;
-    border-radius: 1rem;
-    color: #333;
-    font-size: 0.875rem;
-    border: 1px solid #dee2e6;  
-    margin: 0.25rem;
-}
 
-.badge .close {
-    background: transparent;
-    border: none;
-    font-size: 1rem;
-    color: black;
-    cursor: pointer;
-}
-</style>
-<meta name="csrf-token" content="{{ csrf_token() }}">
+    </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
 
@@ -244,7 +230,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="/tags">Tags</a>
             </li>
-     
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     User Options
@@ -268,212 +253,23 @@
 
 
 
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
+<div class="container">
+    <h2>Change Username</h2>
 
-<center><h1>Store New Data</h1></center>
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-<form id="storeForm" action="{{ url('/store') }}" method="POST"  >
-    @csrf
-    <input
-        type="text"
-        class="form-control"
-        name="text"
-        id="text"
-        placeholder="Type Here"
-        required
-    >
-    <input type="hidden" name="timer_value" id="timer_value">
-    <div id="timer" class="mb-4"></div>
-</form>
+    @error('new_username')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
 
-<div class="container mt-5">
-<center><h1 class="mb-4">Store Data</h1></center>
-<hr>
-
- <form action="{{ url('/delete-multiple') }}" method="POST" id="deleteMultipleForm">
-     @csrf
-     @method('DELETE')
-
-     <table class="table table-bordered">
-         <thead>
-             <tr>
-                 <th>Select All <br><input type="checkbox" id="select_all"></th>
-                 <th>Text</th>
-                 <th>Timer</th>
-                 <th>Created At</th>
-                 <th>Updated At</th>
-                 <th>Tags</th>
-                 <th>Actions</th>
-                 <th>Actions</th>
-             </tr>
-         </thead>
-         <tbody>
-         @foreach ($data as $store)
-    <tr>
-        <td><input type="checkbox" name="select[]" value="{{ $store->id }}"></td>
-        <td>{{ $store->text }}</td>
-        <td>{{ $store->timer }}</td>    
-        <td>{{ $store->created_at }}</td>
-        <td>{{ $store->updated_at }}</td>
-        <td>
- <div class="dropdown">
-     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="showTagsButton-{{$store->id}}">
-       Tags
-     </button>
- 
-     <form action="{{ route('store.tags') }}" method="POST">
-    @csrf
-    <div class="dropdown-menu checkbox-container">
-        @foreach ($tags as $tag)
-            <div class="form-check">
-                <input type="checkbox" class="tag-checkbox" name="tags[]" id="tag_{{$tag->id}}" value="{{$tag->id}}">
-                <label for="tag_{{$tag->id}}">{{$tag->name}}</label>
-            </div>
-        @endforeach
-
-        <input type="hidden" name="item_id" value="{{ $store->id }}">
-        <button type="submit" class='btn-primary' style="margin-left:30px;border-radius:30px">Submit</button>
-    </div>
-</form>
-@foreach ($store->items as $item)
-    <span class="badge bg-white     " id="tag-{{$item->id}}">
-      
-        {{$item->tag_name}}
-        <button type="button" class="close close-dark ml-2" aria-label="Close" onclick="deleteTag({{$item->id}})">
-            <span>&times;</span>
-        </button>
-    </span>
-@endforeach
-
-
-</td>
-
-        <td>
-            <form action="{{ route('deletes', $store->id) }}" method="POST" style="display:inline;" onclick="return confirm('Are you sure you want to delete?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-        </td>
-        <td>
-            <form action="{{ route('edits', $store->id) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('get')
-                <button type="submit" class="btn btn-warning">Edit</button>
-            </form>
-        </td>
-            
-
-       
-    </tr>
-@endforeach
-
-
-
-<script>
-    let timerInterval;
-let isTimerRunning = false;
-let startTime; 
-
-document.getElementById('text').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); 
-
-        if (!isTimerRunning) {
-            startTimer(); 
-        } else {
-            stopTimer(); 
-            document.getElementById('storeForm').submit(); 
-        }
-    }
-});
-$(window).scroll(function() {
-    if ($(this).scrollTop() > 100) {
-        $('.navbar-timer-container').fadeIn();
-    } else {
-        $('.navbar-timer-container').fadeOut();
-    }
-});
-
-function startTimer() {
-    startTime = Date.now(); 
-    isTimerRunning = true;
-
-    timerInterval = setInterval(() => {
-        let elapsedTime = Date.now() - startTime;
-        document.getElementById('timer').innerText = `Timer: ${formatTime(elapsedTime)}`;
-    }, 1000);
-}
-
-function stopTimer() {
-    clearInterval(timerInterval); 
-    isTimerRunning = false;
-
-    let elapsedTime = Date.now() - startTime;
-    document.getElementById('timer_value').value = formatTime(elapsedTime);
-
-    if (confirm("Are you sure you want to stop the timer?")) {
-        alert("Timer stopped.");
-    } else {
-        isTimerRunning = true;
-        timerInterval = setInterval(updateTimer, 1000);
-        console.log("Timer continued.");
-    }
-}
-
-function formatTime(milliseconds) {
-    let totalSeconds = Math.floor(milliseconds / 1000);
-    let minutes = Math.floor(totalSeconds / 60);
-    let seconds = totalSeconds % 60;
-    minutes = minutes < 10 ? `0${minutes}` : minutes;
-    seconds = seconds < 10 ? `0${seconds}` : seconds;
-
-    return `${minutes}:${seconds}`;
-}
-$('#select_all').change(function() {
-  var checkboxes = $(this).closest('form').find(':checkbox');
-  checkboxes.prop('checked', $(this).is(':checked'));
-});
-
-function deleteTag(itemId) {
-    const confirmed = confirm('Are you sure you want to delete this tag?');
-    
-    if (confirmed) {
-        fetch(`http://127.0.0.1:8000/tags/${itemId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Tag deleted successfully!', data);
-            document.getElementById(`tag-${itemId}`).remove();
-        })
-        .catch(error => {
-            console.error('Error occurred while deleting the tag:', error);
-        });
-    } else {
-        console.log('Tag deletion canceled.');
-    }
-}
-
-
-
-
-</script>
-
-    </body>
-
-<html>
-
+    <form method="POST" action="{{ route('change.username') }}">
+        @csrf
+        <div class="form-group">
+            <label for="new_username">New Username</label>
+            <input type="text" id="new_username" name="new_username" class="form-control" value="{{ old('new_username') }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Change Username</button>
+    </form>
+</div>

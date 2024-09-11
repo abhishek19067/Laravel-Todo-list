@@ -10,4 +10,9 @@ class item extends Model
     use HasFactory;
     protected $table='item_tag';
     protected $primary_key="id";
+    
+    public function tags()
+    {
+        return $this->belongsToMany(Tags::class, 'item_tag', 'item_id', 'tag_id');
+    }
 }
